@@ -223,6 +223,3 @@ mvn clean package
 
 ---
 
-**Proje:** Yapi Market Stok ve Siparis Takip Sistemi  
-**Ders:** Internet Programlama  
-**Donem:** 2024-2025 Bahar Donemi
