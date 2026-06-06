@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Siparis Listesi - Yapi Market</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center page-header">
+            <h1><i class="bi bi-cart-check"></i> Siparis Listesi</h1>
+            <a th:href="@{/orders/new}" class="btn btn-danger">
+                <i class="bi bi-plus-circle"></i> Yeni Siparis Olustur
+            </a>
+        </div>
+
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show flash-message" role="alert">
+            <i class="bi bi-check-circle"></i> <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Siparis Tarihi</th>
+                    <th>Toplam Tutar (TL)</th>
+                    <th>Durum</th>
+                    <th>Islemler</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.id}"></td>
+                    <td th:text="${order.orderDate}"></td>
+                    <td th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></td>
+                    <td>
+                        <span class="badge badge-status-beklemede" th:if="${order.status == 'Beklemede'}" th:text="${order.status}"></span>
+                        <span class="badge badge-status-hazirlaniyor" th:if="${order.status == 'Hazirlaniyor'}" th:text="${order.status}"></span>
+                        <span class="badge badge-status-tamamlandi" th:if="${order.status == 'Tamamlandi'}" th:text="${order.status}"></span>
+                        <span class="badge badge-status-iptal" th:if="${order.status == 'Iptal'}" th:text="${order.status}"></span>
+                        <span class="badge bg-secondary"
+                              th:unless="${order.status == 'Beklemede' or order.status == 'Hazirlaniyor' or order.status == 'Tamamlandi' or order.status == 'Iptal'}"
+                              th:text="${order.status}"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{/order-items/order/{id}(id=${order.id})}" class="btn btn-sm btn-outline-success btn-action">
+                            <i class="bi bi-list-ul"></i> Kalemler
+                        </a>
+                        <a th:href="@{/orders/edit/{id}(id=${order.id})}" class="btn btn-sm btn-outline-primary btn-action">
+                            <i class="bi bi-pencil"></i> Duzenle
+                        </a>
+                        <a th:href="@{/orders/delete/{id}(id=${order.id})}" class="btn btn-sm btn-outline-danger btn-action"
+                           onclick="return confirm('Bu siparisi silmek istediginizden emin misiniz?');">
+                            <i class="bi bi-trash"></i> Sil
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(orders)}">
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox display-6"></i>
+                        <p class="mt-2">Henuz siparis eklenmemis.</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

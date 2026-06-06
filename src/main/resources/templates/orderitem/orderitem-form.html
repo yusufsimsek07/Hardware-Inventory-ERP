@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Siparis Kalemi Formu - Yapi Market</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container py-4">
+        <div class="page-header">
+            <h1>
+                <i class="bi bi-list-ul"></i>
+                <span th:if="${orderItem.id == null}">Yeni Siparis Kalemi Ekle</span>
+                <span th:unless="${orderItem.id == null}">Siparis Kalemi Duzenle</span>
+            </h1>
+        </div>
+
+        <div class="form-container">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form th:action="@{/order-items/save}" th:object="${orderItem}" method="post">
+                        <input type="hidden" th:field="*{id}"/>
+                        <input type="hidden" name="orderId" th:value="${orderId}"/>
+
+                        <!-- Product Dropdown -->
+                        <div class="mb-3">
+                            <label for="product" class="form-label">Urun <span class="text-danger">*</span></label>
+                            <select class="form-select" id="product" th:field="*{product}"
+                                    th:classappend="${#fields.hasErrors('product')} ? 'is-invalid' : ''">
+                                <option value="">-- Urun Seciniz --</option>
+                                <option th:each="p : ${products}" th:value="${p.id}"
+                                        th:text="${p.name + ' (' + #numbers.formatDecimal(p.price, 1, 2) + ' TL)'}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('product')}" th:errors="*{product}"></div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Miktar <span class="text-danger">*</span></label>
+                            <input type="number" min="1" class="form-control" id="quantity" th:field="*{quantity}"
+                                   th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid' : ''"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+                        </div>
+
+                        <!-- Unit Price -->
+                        <div class="mb-3">
+                            <label for="unitPrice" class="form-label">Birim Fiyat (TL)</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="unitPrice" th:field="*{unitPrice}"/>
+                            <small class="form-text text-muted">Bos birakirsaniz urun fiyati otomatik uygulanir.</small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Kaydet
+                            </button>
+                            <a th:href="@{/order-items/order/{orderId}(orderId=${orderId})}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Iptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
